@@ -1,0 +1,43 @@
+function [origin_image, noised_image, noised_bw_image] = gen_noise (image_path_without_extension, ...
+                                                                    noise_type, ...
+                                                                    noise_power, ...
+                                                                    save_to_file, ...
+                                                                    filename, ...
+                                                                    gen_black_white, ...
+                                                                    black_white_filename)
+
+if ~exist                                                                
+                                                                
+origin_image = imread([image_path_without_extension, '.bmp']);
+
+if gen_black_white == true
+    black_white_image = rgb2gray(origin_image);
+end
+
+switch noise_type
+    case 'imp'
+        noised_image = imnoise(origin_image, 'salt & pepper', noise_power);
+        noised_bw_image = imnoise(black_white_image, 'salt & pepper', noise_power);
+        
+    case 'gauss'
+        noised_image = imnoise(origin_image, 'gaussian', noise_power);
+        noised_bw_image = imnoise(black_white_image, 'gaussian', noise_power);
+        
+    case 'mixed'
+        noised_image = imnoise(origin_image, 'gaussian', noise_power);
+        noised_image = imnoise(noised_image, 'salt & pepper', noise_power);
+        noised_bw_image = imnoise(black_white_image, 'gaussian', noise_power);
+        noised_bw_image = imnoise(noised_bw_image, 'salt & pepper', noise_power);
+        
+    otherwise     
+end
+
+if save_to_file == true
+    imwrite(noised_image, filename);
+end
+
+if gen_black_white == true
+    imwrite(noised_bw_image, black_white_filename);
+end
+
+end
